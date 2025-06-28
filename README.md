@@ -98,7 +98,7 @@ npm install
 **Create a `.env` file:**
 
 ```env
-PORT=5000
+PORT=4000
 MONGO_URI=your_mongodb_connection
 JWT_SECRET=your_jwt_secret
 RAZORPAY_KEY=your_razorpay_key
@@ -116,7 +116,7 @@ npm run server
 ```bash
 cd ../frontend
 npm install
-npm start
+npm run dev
 ```
 
 ### Access the App
