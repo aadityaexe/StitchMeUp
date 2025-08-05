@@ -11,10 +11,10 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const backendURL = import.meta.env.VITE_BACKEND_URL;
     try {
       const res = await axios.post(
-        `http://localhost:4000/api/user/reset-password/${token}`,
+        `${backendURL}/api/user/reset-password/${token}`,
         { password: newPassword }
       );
 
