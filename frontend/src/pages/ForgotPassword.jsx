@@ -11,6 +11,8 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const backendURL = import.meta.env.VITE_BACKEND_URL;
     setMessage("");
     setError("");
 
@@ -21,7 +23,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/user/forgot-password",
+        `${backendURL}/api/user/forgot-password`,
         { email }
       );
 
