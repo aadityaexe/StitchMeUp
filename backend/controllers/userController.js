@@ -2,9 +2,9 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
-import { validationResult } from 'express-validator';
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import { validationResult } from "express-validator";
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
@@ -102,8 +102,8 @@ const adminLogin = async (req, res) => {
 };
 
 //forgot password route
- const forgetPasswordController = async (req, res) => {
-  console.log('got the req')
+const forgetPasswordController = async (req, res) => {
+  console.log("got the req");
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -114,46 +114,51 @@ const adminLogin = async (req, res) => {
   const user = await userModel.findOne({ email });
 
   if (!user) {
-    return res.status(400).json({ success: false, message: 'No user found' });
+    return res.status(400).json({ success: false, message: "No user found" });
   }
 
   try {
     // Generate plain reset token
-    const resetToken = crypto.randomBytes(20).toString('hex');
+    const resetToken = crypto.randomBytes(20).toString("hex");
 
     // Store hashed token & expiry in DB
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
     user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 mins
 
     await user.save();
 
-    // Create reset link
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+    // ✅ Use frontend URL from .env
+    const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     // Send email
     const mailer = nodemailer.createTransport({
-      service: 'Gmail',
+      service: "Gmail",
       auth: {
         user: process.env.EMAIL,
-        pass: process.env.APPNAME_PASS
-      }
+        pass: process.env.APPNAME_PASS,
+      },
     });
 
     const message = {
       to: user.email,
-      subject: 'Password Reset',
+      subject: "Password Reset",
       html: `<p>Click <a href="${resetURL}">here</a> to reset your password. This link expires in 15 minutes.</p>`,
     };
 
     await mailer.sendMail(message);
 
-    res.status(200).json({ success: true, message: 'Reset link sent to email' });
-
+    res
+      .status(200)
+      .json({ success: true, message: "Reset link sent to email" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Error sending reset email' });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error sending reset email" });
   }
 };
-
 
 export { loginUser, registerUser, adminLogin, forgetPasswordController };
