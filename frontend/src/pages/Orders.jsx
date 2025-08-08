@@ -5,90 +5,122 @@ import axios from "axios";
 
 const Orders = () => {
   const { backendUrl, token, currency } = useContext(ShopContext);
-
-  const [orderData, setorderData] = useState([]);
+  const [orderData, setOrderData] = useState([]);
 
   const loadOrderData = async () => {
     try {
-      if (!token) {
-        return null;
-      }
+      if (!token) return;
 
       const response = await axios.post(
         backendUrl + "/api/order/userorders",
         {},
         { headers: { token } }
       );
+
       if (response.data.success) {
         let allOrdersItem = [];
-        response.data.orders.map((order) => {
-          order.items.map((item) => {
-            item["status"] = order.status;
-            item["payment"] = order.payment;
-            item["paymentMethod"] = order.paymentMethod;
-            item["date"] = order.date;
-            allOrdersItem.push(item);
+        response.data.orders.forEach((order) => {
+          order.items.forEach((item) => {
+            allOrdersItem.push({
+              ...item,
+              status: order.status,
+              payment: order.payment,
+              paymentMethod: order.paymentMethod,
+              date: order.date,
+            });
           });
         });
-        setorderData(allOrdersItem.reverse());
+        setOrderData(allOrdersItem.reverse());
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     loadOrderData();
   }, [token]);
 
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case "delivered":
+        return "bg-green-500";
+      case "shipped":
+        return "bg-blue-500";
+      case "pending":
+        return "bg-yellow-500";
+      case "cancelled":
+        return "bg-red-500";
+      default:
+        return "bg-gray-400";
+    }
+  };
+
   return (
-    <div className="border-t pt-16">
-      <div className="text-2xl">
+    <div className="border-t pt-12 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
+      <div className="text-2xl mb-8">
         <Title text1={"MY"} text2={"ORDERS"} />
       </div>
 
-      <div>
+      <div className="space-y-6">
         {orderData.map((item, index) => (
           <div
             key={index}
-            className="py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+            className="bg-white shadow-md rounded-lg p-4 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-200"
           >
-            <div className="flex items-start gap-6 text-sm">
-              <img className="w-16 sm:w-20" src={item.image[0]} alt="" />
+            {/* Product Info */}
+            <div className="flex items-start gap-4 text-sm">
+              <img
+                className="w-20 h-20 object-cover rounded-md border"
+                src={item.image[0]}
+                alt={item.name}
+              />
               <div>
-                <p className="sm:text-base font-medium">{item.name}</p>
-                <div className="flex items-center gap-3 mt-1 text-base text-gray-700">
+                <p className="sm:text-base font-semibold text-gray-800">
+                  {item.name}
+                </p>
+                <div className="flex flex-wrap items-center gap-4 mt-1 text-gray-700">
                   <p>
                     {currency}
                     {item.price}
                   </p>
-                  <p>Quantity: {item.quantity}</p>
+                  <p>Qty: {item.quantity}</p>
                   <p>Size: {item.size}</p>
                 </div>
-                <p className="mt-1">
-                  Date:{" "}
-                  <span className=" text-gray-400">
-                    {new Date(item.date).toDateString()}
-                  </span>
+                <p className="mt-2 text-sm text-gray-500">
+                  Date: {new Date(item.date).toDateString()}
                 </p>
-                <p className="mt-1">
-                  Payment:{" "}
-                  <span className=" text-gray-400">{item.paymentMethod}</span>
+                <p className="mt-1 text-sm text-gray-500">
+                  Payment: {item.paymentMethod}
                 </p>
               </div>
             </div>
-            <div className="md:w-1/2 flex justify-between">
+
+            {/* Status & Actions */}
+            <div className="flex flex-col items-start md:items-end gap-3">
               <div className="flex items-center gap-2">
-                <p className="min-w-2 h-2 rounded-full bg-green-500"></p>
-                <p className="text-sm md:text-base">{item.status}</p>
+                <span
+                  className={`inline-block w-3 h-3 rounded-full ${getStatusColor(
+                    item.status
+                  )}`}
+                ></span>
+                <p className="text-sm font-medium capitalize">{item.status}</p>
               </div>
               <button
                 onClick={loadOrderData}
-                className="border px-4 py-2 text-sm font-medium rounded-sm"
+                className="border border-gray-300 hover:border-black hover:bg-black hover:text-white transition px-4 py-2 text-sm font-medium rounded-md"
               >
                 Track Order
               </button>
             </div>
           </div>
         ))}
+
+        {orderData.length === 0 && (
+          <p className="text-center text-gray-500 mt-12">
+            You have no orders yet.
+          </p>
+        )}
       </div>
     </div>
   );
