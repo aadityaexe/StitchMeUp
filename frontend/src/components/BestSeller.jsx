@@ -1,41 +1,45 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "./Title";
 import ProductItem from "./ProductItem";
 
 const BestSeller = () => {
   const { products } = useContext(ShopContext);
-  const [bestSeller, setBestSeller] = useState([]);
 
-  useEffect(() => {
-    const bestProduct = products.filter((item) => item.bestseller);
-    setBestSeller(bestProduct.slice(0, 5));
+  // UseMemo to avoid recalculating unless products change
+  const bestSeller = useMemo(() => {
+    return products.filter((item) => item.bestseller).slice(0, 5);
   }, [products]);
 
   return (
-    <div className="my-10">
-      <div className="text-center text-3xl py-8">
-        <Title text1={"BEST"} text2={"SELLERS"} />
-        <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
-          Discover our best-selling products that have captured the hearts of
-          our customers. Each piece is crafted with care, ensuring high quality
-          and personalized service. Explore our top picks and find your new
-          favorite garment today!
+    <section className="my-12 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="text-center max-w-2xl mx-auto">
+        <Title text1="BEST" text2="SELLERS" />
+        <p className="mt-4 text-xs sm:text-sm md:text-base text-gray-600">
+          Discover our most-loved pieces, chosen by our customers for their
+          style, comfort, and quality. Each garment is crafted with care to
+          offer you a timeless addition to your wardrobe.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
-        {bestSeller.map((item, index) => (
-          <ProductItem
-            key={index}
-            id={item._id}
-            name={item.name}
-            image={item.image}
-            price={item.price}
-          />
+      {/* Products Grid */}
+      <div className="mt-10 grid gap-5 sm:gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {bestSeller.map((item) => (
+          <div
+            key={item._id}
+            className="transform transition-transform duration-300 hover:scale-105"
+          >
+            <ProductItem
+              id={item._id}
+              name={item.name}
+              image={item.image}
+              price={item.price}
+            />
+          </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 
