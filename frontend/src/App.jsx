@@ -21,22 +21,32 @@ const App = () => {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
       <ToastContainer />
-      <Navbar />
-      <SearchBar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/collection" element={<Collection />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/product/:productId" element={<Product />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/place-order" element={<PlaceOrder />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/verify" element={<Verify />} />
-      </Routes>
+
+      {/* Sticky Navbar */}
+      <div className="sticky top-0 z-50 bg-white shadow-sm">
+        <Navbar />
+        <SearchBar />
+      </div>
+
+      {/* Main Routes */}
+      <div className="pt-4">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/collection" element={<Collection />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/product/:productId" element={<Product />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/place-order" element={<PlaceOrder />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/verify" element={<Verify />} />
+        </Routes>
+      </div>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
