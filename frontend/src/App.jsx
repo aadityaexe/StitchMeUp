@@ -22,11 +22,8 @@ const App = () => {
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
       <ToastContainer />
 
-      {/* Sticky Navbar */}
-      <div className="sticky top-0 z-50 bg-white shadow-sm">
-        <Navbar />
-        <SearchBar />
-      </div>
+      <Navbar />
+      <SearchBar />
 
       {/* Main Routes */}
       <div className="pt-4">
