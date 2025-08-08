@@ -8,21 +8,26 @@ const ProductItem = ({ id, image, name, price }) => {
   return (
     <Link
       onClick={() => scrollTo(0, 0)}
-      className="text-gray-700 cursor-pointer"
       to={`/product/${id}`}
+      className="group block text-gray-800"
     >
-      <div className=" overflow-hidden">
+      {/* Image Container */}
+      <div className="relative overflow-hidden rounded-lg bg-gray-50 shadow-sm aspect-[3/4]">
         <img
-          className="hover:scale-110 transition ease-in-out"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           src={image[0]}
-          alt=""
+          alt={name}
         />
       </div>
-      <p className="pt-3 pb-1 text-sm">{name}</p>
-      <p className=" text-sm font-medium">
-        {currency}
-        {price}
-      </p>
+
+      {/* Product Info */}
+      <div className="mt-3">
+        <p className="text-sm font-medium truncate">{name}</p>
+        <p className="text-sm font-semibold text-gray-900 mt-1">
+          {currency}
+          {price}
+        </p>
+      </div>
     </Link>
   );
 };
